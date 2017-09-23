@@ -9,7 +9,9 @@ const todos=[{
   text:'First test Todo'
 },{
   _id:new ObjectID(),
-  text:'Sexond test todo'
+  text:'Sexond test todo',
+  completed:true,
+  completedAt:55
 }];
 //Post
 // beforeEach((done)=>{
@@ -155,4 +157,41 @@ it('should return 404 if object id is invalid',(done)=>{
   // })
   .end(done);
 })
+})
+
+describe('Patch /todos/ :id',()=>{
+  it('should update the todo',(done)=>{
+var hexid=todos[0]._id.toHexString();
+var text='This should be new text'
+request(app)
+.patch(`/todos/${hexid}`)
+.send({
+  completed:true,
+  text
+})
+.expect(200)
+.expect((res)=>{
+  expect(res.body.todo.text).toBe(text);
+  expect(res.body.todo.completed).toBe(true);
+  expect(res.body.todo.completedAt).toBeA('number');
+})
+.end(done);
+  });
+  it('should clear completedAt when todo id not completed',(done)=>{
+    var hexid=todos[1]._id.toHexString();
+    var text='This should be new text !!!'
+    request(app)
+    .patch(`/todos/${hexid}`)
+    .send({
+      completed:false,
+      text
+    })
+    .expect(200)
+    .expect((res)=>{
+      expect(res.body.todo.text).toBe(text);
+      expect(res.body.todo.completed).toBe(false);
+      expect(res.body.todo.completedAt).toNotExist();
+    })
+    .end(done);
+  })
 })
