@@ -6,7 +6,7 @@ const bodyparser=require('body-parser')
 const {mongoose}=require('./db/mongoose')
 
 var {Todo}=require('./models/todo')
-var {user}=require('./models/user')
+var {User}=require('./models/user')
 const{ObjectID}=require('mongodb')
 var app=express();
 
@@ -99,6 +99,23 @@ res.send({todo});
      res.status(400).send();
    })
 })
+
+//Post/user
+app.post('/users',(req,res)=>{
+
+   var body=_.pick(req.body,['email','password']);
+//console.log(req.body)
+var user=new User(body);
+user.save().then(()=>{
+return user.generateAuthToken();
+//res.send(user);
+}).then((token)=>{
+  res.header('x-auth',token).send(user);
+}).catch((e)=>{
+res.status(400).send(e);
+})
+});
+
 
 app.listen(port,()=>{
   console.log(`Started on port ${port}`)
