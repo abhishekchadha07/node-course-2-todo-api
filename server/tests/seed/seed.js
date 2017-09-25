@@ -13,7 +13,7 @@ tokens:[{
   token:jwt.sign({_id:userOneId,access:'auth'},'abc123').toString()
 }]
 },{
-  id:userTwoId,
+  _id:userTwoId,
   email:'abhi@yahoo.in',
   password:'userTwopass',
 
